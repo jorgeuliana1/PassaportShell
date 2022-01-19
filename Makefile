@@ -14,6 +14,7 @@ val: clean compile
 	clear
 	valgrind --leak-check=full ./trab 
 
-
+comp-ext:
+	gcc -o prog1 prog1.c
 
 	
