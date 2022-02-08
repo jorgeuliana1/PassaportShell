@@ -20,6 +20,7 @@ char *trimString(char *str);
 bool isNullCommand(char* commandLine);
 void showPrompt();
 unsigned splitCommand(char* command, char** argv);
+void signalHandler(int signo);
 
 int main(int argc, char const *argv[]){
     
@@ -78,6 +79,10 @@ int main(int argc, char const *argv[]){
     }
 
     return 0;
+}
+
+void signalHandler(int signo){
+  if
 }
 
 //Split commands into arguments 
