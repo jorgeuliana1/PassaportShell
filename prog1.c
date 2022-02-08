@@ -15,12 +15,13 @@ void delay(int seconds){
 
 
 int main(int argc, char const *argv[]){
-    
-    while(true){
-        printf("\033[1;33m");
-        printf(".");
+    int i=0;
+    while(i < 15000){
+        printf("\033[1;32m");
+        printf(".\n");
         printf("\033[0m");
         delay(100); 
+        i++;
     };
 
     return 0;

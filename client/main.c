@@ -4,16 +4,22 @@
 #include <string.h>
 #include <ctype.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #define MAX_LINE_SIZE 1024
 #define MAX_COMMANDS 5
 #define ARGV_LEN 3
 
-int executeCommandInBackground(char *command, FILE* stream);
+int executeCommandInForeground(char *command, int stream);
+int executeCommandInBackground(char *command, int stream);
 unsigned getCommands(char** commands);
 char *trimString(char *str);
 bool isNullCommand(char* commandLine);
 void showPrompt();
+unsigned splitCommand(char* command, char** argv);
 
 int main(int argc, char const *argv[]){
     
@@ -28,6 +34,7 @@ int main(int argc, char const *argv[]){
         // for (int i = 0; i < numOfCommands; i++) {
         //     printf(">> %s\n", commands[i]);
         // }
+        int defOut;
 
         for (int i = 0; i < numOfCommands; i++) {
             if(!strcmp(commands[i],"term")) {
@@ -39,8 +46,27 @@ int main(int argc, char const *argv[]){
                 return 0;
             
             else { // Executing the commands
-                int proccess;
-                proccess = executeCommandInBackground(commands[i], stdout);
+                /*
+                char** cargv;
+                cargv = (char**)malloc(sizeof(char*) * ARGV_LEN);
+                splitCommand(commands[i], cargv);
+
+                //char* defOutName;
+                //defOutName = (char*)malloc(sizeof(char) * (strlen(cargv[0]) + 5));
+                //sprintf(defOutName, "%s.txt", cargv[0]);
+
+                //printf("%s\n", defOutName);
+
+                //defOut = open(defOutName, O_WRONLY);
+                */
+                defOut = 1;
+
+                int proccesses;
+                if(numOfCommands == 1) {
+                  executeCommandInForeground(commands[i], defOut);
+                }
+
+                proccesses = executeCommandInBackground(commands[i], defOut);
             }
             
         }
@@ -54,6 +80,7 @@ int main(int argc, char const *argv[]){
     return 0;
 }
 
+//Split commands into arguments 
 unsigned splitCommand(char* command, char** argv) {
     int i;
     char* token = trimString(strtok(command, " "));
@@ -81,7 +108,7 @@ unsigned splitCommand(char* command, char** argv) {
     return (unsigned)i;
 }
 
-int executeCommandInBackground(char * command, FILE* stream) {
+int executeCommandInForeground(char * command, int stream) {
     //FILE* process;
     int letter, process;
 
@@ -91,23 +118,37 @@ int executeCommandInBackground(char * command, FILE* stream) {
     // Running the commmand in background with po
     int numOfArgs = splitCommand(command, argv);
     char* argvHead = argv[0];
+
     process = execvp(argvHead, argv); // This must make the program run
-    if(process)
-
-    // Running the commmand in background with popen
-    // process = popen(command, "w");
-
-    // // If popen could not be open
-    // if (popen == NULL) {
-    //     return 1;
-    // }
-
-    // while (letter = fgetc(process) != EOF)
-    //    fprintf(stream, "%c", letter); // Outputting data in the given stream
-    
-    // pclose(process);
 
     return 0; // Everything is alright
+}
+
+int executeCommandInBackground(char* command, int stream) {
+    pid_t pidWriter, pidReader;
+
+    int pipe_p[2];
+    if (pipe(pipe_p) < 0)
+        exit(1);
+    
+    if ((pidWriter = fork()) == 0) { // The command will run in foreground at the child process (background of the parent process)W
+        // Changing the default output
+        close(STDOUT_FILENO);
+        pipe_p[0] = open("banana.txt", O_WRONLY);
+        close(pipe_p[1]);
+
+        int commandReturn = executeCommandInForeground(command, stream);
+
+        // Closing the output file and returning the commandReturn
+        close(pipe_p[0]);
+        perror("");
+        //return commandReturn;
+    }
+
+    close(pipe_p[0]);
+    close(pipe_p[1]);
+
+    return -1;
 }
 
 unsigned getCommands(char** commands) {

@@ -1,0 +1,29 @@
+abacate
+gle.com(2800:3f0:4004:803::200e (2800:3f0:4004:803::200e)) 56 data bytes
+64 bytes from 2800:3f0:4004:803::200e (2800:3f0:4004:803::200e): icmp_seq=1 ttl=113 time=16.2 ms
+64 bytes from 2800:3f0:4004:803::200e (2800:3f0:4004:803::200e): icmp_seq=2 ttl=113 time=16.3 ms
+64 bytes from 2800:3f0:4004:803::200e (2800:3f0:4004:803::200e): icmp_seq=3 ttl=113 time=15.9 ms
+64 bytes from 2800:3f0:4004:803::200e (2800:3f0:4004:803::200e): icmp_seq=4 ttl=113 time=21.8 ms
+64 bytes from 2800:3f0:4004:803::200e (2800:3f0:4004:803::200e): icmp_seq=5 ttl=113 time=18.8 ms
+64 bytes from 2800:3f0:4004:803::200e (2800:3f0:4004:803::200e): icmp_seq=6 ttl=113 time=19.8 ms
+64 bytes from 2800:3f0:4004:803::200e (2800:3f0:4004:803::200e): icmp_seq=7 ttl=113 time=16.2 ms
+64 bytes from 2800:3f0:4004:803::200e (2800:3f0:4004:803::200e): icmp_seq=8 ttl=113 time=18.3 ms
+64 bytes from 2800:3f0:4004:803::200e (2800:3f0:4004:803::200e): icmp_seq=9 ttl=113 time=18.4 ms
+64 bytes from 2800:3f0:4004:803::200e (2800:3f0:4004:803::200e): icmp_seq=10 ttl=113 time=18.4 ms
+64 bytes from 2800:3f0:4004:803::200e (2800:3f0:4004:803::200e): icmp_seq=11 ttl=113 time=23.2 ms
+64 bytes from 2800:3f0:4004:803::200e (2800:3f0:4004:803::200e): icmp_seq=12 ttl=113 time=19.9 ms
+64 bytes from 2800:3f0:4004:803::200e (2800:3f0:4004:803::200e): icmp_seq=13 ttl=113 time=21.1 ms
+64 bytes from 2800:3f0:4004:803::200e (2800:3f0:4004:803::200e): icmp_seq=14 ttl=113 time=17.6 ms
+64 bytes from 2800:3f0:4004:803::200e (2800:3f0:4004:803::200e): icmp_seq=15 ttl=113 time=16.2 ms
+64 bytes from 2800:3f0:4004:803::200e (2800:3f0:4004:803::200e): icmp_seq=16 ttl=113 time=16.4 ms
+64 bytes from 2800:3f0:4004:803::200e (2800:3f0:4004:803::200e): icmp_seq=17 ttl=113 time=15.9 ms
+64 bytes from 2800:3f0:4004:803::200e (2800:3f0:4004:803::200e): icmp_seq=18 ttl=113 time=18.1 ms
+64 bytes from 2800:3f0:4004:803::200e (2800:3f0:4004:803::200e): icmp_seq=19 ttl=113 time=15.6 ms
+64 bytes from 2800:3f0:4004:803::200e (2800:3f0:4004:803::200e): icmp_seq=20 ttl=113 time=16.4 ms
+64 bytes from 2800:3f0:4004:803::200e (2800:3f0:4004:803::200e): icmp_seq=21 ttl=113 time=15.8 ms
+64 bytes from 2800:3f0:4004:803::200e (2800:3f0:4004:803::200e): icmp_seq=22 ttl=113 time=17.8 ms
+64 bytes from 2800:3f0:4004:803::200e (2800:3f0:4004:803::200e): icmp_seq=23 ttl=113 time=15.8 ms
+
+--- google.com ping statistics ---
+23 packets transmitted, 23 received, 0% packet loss, time 22026ms
+rtt min/avg/max/mdev = 15.615/17.814/23.166/2.083 ms
