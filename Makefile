@@ -2,7 +2,7 @@ all: compile run clean
 
 compile:
 	clear
-	gcc -o trab client/main.c
+	gcc -o trab client/main.c client/commandLine.c
 
 run:
 	./trab
