@@ -10,7 +10,7 @@
 #define MAX_COMMANDS 5
 #define ARGV_LEN 3
 
-char** splitCommand(char* command, FILE* dest);
+char** splitCommand(char* command, char** destPath);
 
 unsigned getCommands(char** commands);
 

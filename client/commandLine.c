@@ -1,10 +1,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <unistd.h>
 
 #include "commandLine.h"
 
-char** splitCommand(char* command, FILE* dest) {
+char** splitCommand(char* command, char** destPath) {
     int i;
     char** argv = (char**)malloc(sizeof(char*) * ARGV_LEN);
     char* token = trimString(strtok(command, " "));
@@ -19,9 +20,9 @@ char** splitCommand(char* command, FILE* dest) {
     	}
     	else if (!strcmp(token, ">")) {
     	    i--;
-            char* destPath = strtok(NULL, " ");
-            trimString(destPath);
-            dest = fopen(destPath, "w");
+            char* tempString = strtok(NULL, " ");
+            trimString(tempString);
+            *destPath = tempString;
      	}
     	else {
     		args[i] = (char*)malloc((strlen(trimString(token)) + 1) * sizeof(char));

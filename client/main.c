@@ -12,8 +12,10 @@
 
 #include "commandLine.h"
 
-int executeCommand(char ** command, FILE* de);
-int executeCommandForeground(char ** command, FILE* dest);
+#define STDOUT 1
+
+int executeCommand(char ** command, char* destPath);
+int executeCommandForeground(char ** command, char* destPath);
 
 void showPrompt();
 pid_t shell_terminal;
@@ -30,9 +32,6 @@ int main(int argc, char const *argv[]){
         showPrompt();
         char* commands[MAX_COMMANDS];
         size_t numOfCommands = getCommands(commands);
-
-        //DEBUG: print commands
-        printf("COMMANDS:%ld\n", numOfCommands);
         int defOut;
 
         for (int i = 0; i < numOfCommands; i++) {
@@ -48,17 +47,14 @@ int main(int argc, char const *argv[]){
                 int proccesses;
                 char** command;
                 
-                FILE* destiny = NULL;
-                command = splitCommand(commands[i], destiny);
+                char* destinyPath;
+                command = splitCommand(commands[i], &destinyPath);
 
                 // Allocating the argv
-                if(numOfCommands == 1) executeCommandForeground(command, destiny);
+                if(numOfCommands == 1) executeCommandForeground(command, destinyPath);
                 
                 else proccesses = executeCommand(command, NULL);
-                
-                if(destiny) fclose(destiny);
             }
-
         }
 
         // free commands
@@ -70,26 +66,26 @@ int main(int argc, char const *argv[]){
     return 0;
 }
 
-int executeCommandForeground(char ** command, FILE* dest) {
-    executeCommand(command, dest);
+int executeCommandForeground(char ** command, char* destPath) {
+    executeCommand(command, destPath);
     wait(NULL);
 }
 
-int executeCommand(char** command, FILE* dest) {
+int executeCommand(char** command, char* destPath) {
     pid_t pidWriter, pidReader;
 
     if ((pidWriter = fork()) == 0) { // The command will run in foreground at the child process (background of the parent process)W
         // Changing the default output
-
-        int ret = tcsetpgrp(shell_terminal, getpgid(getpid()));
-        printf("ret = %d\n", ret);
-        printf("pgid = %u\n", tcgetpgrp(getpid()));
-        // int commandReturn = executeCommand(command, stream);
-        int process;
-
+        int ret, process;
+        ret = tcsetpgrp(shell_terminal, getpgid(getpid()));
+        if (strlen(destPath)) {
+            int fd = open(destPath, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+            close(STDOUT);
+            dup2(fd, STDOUT);
+        }
         process = execvp(command[0], command); // This must make the program run      
     }
-
+    
     return -1;
 }
 
