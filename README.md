@@ -1,11 +1,11 @@
 # Checklist
 
-- [x] Run processes in background
-- [x] Run processes in foreground
-- [x] Define folder architecture
+- [X] Run processes in background
+- [X] Run processes in foreground
+- [X] Define folder architecture
 - [ ] Separate process by group
 - [ ] Put processes to foreground (fg command)
 - [ ] Put processes to bakcground (30s after fg command)
-- [ ] Redirect stdout with command operator >
-- [ ] Bash to ignore singals SIGINT, SIGQUIT and SIGTSTP with message "Estou vacinada... desista!!" 
+- [X] Redirect stdout with command operator >
+- [X] Bash to ignore singals SIGINT, SIGQUIT and SIGTSTP with message "Estou vacinada... desista!!" 
 - [ ] Kill processes when receive SIGUSR1

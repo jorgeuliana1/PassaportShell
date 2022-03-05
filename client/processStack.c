@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
-#include "processStack.h"
+#include "../headers/processStack.h"
 
 Stack* stackInit() {
     Stack* s;

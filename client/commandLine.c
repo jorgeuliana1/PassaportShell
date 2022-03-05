@@ -3,7 +3,7 @@
 #include <ctype.h>
 #include <unistd.h>
 
-#include "commandLine.h"
+#include "../headers/commandLine.h"
 
 char** splitCommand(char* command, char** destPath) {
     int i;
@@ -45,6 +45,7 @@ unsigned getCommands(char** commands) {
     char* commandLine;
     size_t bufferSize = MAX_LINE_SIZE;
     commandLine = (char*)malloc(sizeof(char) * bufferSize);
+
     getline(&commandLine, &bufferSize, stdin);
 
     if (isNullCommand(trimString(commandLine))) { // case of null character
