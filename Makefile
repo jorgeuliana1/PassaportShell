@@ -1,4 +1,8 @@
-all: compile run clean
+# Iago de Sousa Cerqueira
+# José Jorge Moutinho Uliana
+# Mirelly Micaella
+
+all: clean compile run 
 
 compile:
 	clear
@@ -13,8 +17,3 @@ clean:
 val: clean compile
 	clear
 	valgrind --leak-check=full ./trab 
-
-comp-ext:
-	gcc -o prog1 prog1.c
-
-	

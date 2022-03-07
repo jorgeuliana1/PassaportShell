@@ -1,8 +1,0 @@
-{
-  "files.associations": {
-    "*.txt": "plaintext",
-    "wait.h": "c",
-    "commandline.h": "c",
-    "signal.h": "c"
-  }
-}

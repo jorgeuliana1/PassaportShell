@@ -17,25 +17,29 @@
 
 #define STDOUT 1
 
+bool vaccinatedProcessesExist = false;
+
 void pshLoop()
 {
-    printf("prompt pid = %d\n", getpid());
+    // printf("prompt pid = %d\n", getpid());
     showPrompt();
     char *commands[MAX_COMMANDS];
     size_t numOfCommands = getCommands(commands);
     int defOut;
 
-    for (int i = 0; i < numOfCommands; i++)
-    {
-        if (!strcmp(commands[i], "term"))
-        {
-            printf("|| term command ||\n");
+    for (int i = 0; i < numOfCommands; i++) {
+        if (!strcmp(commands[i], "term")){
             exit(0);
         }
-        if (!strcmp(commands[i], "fg"))
-        {
-            wait(NULL);
-            // TODO
+        else if (!strcmp(commands[i], "fg")){
+            pid_t vaccinatedGpid;
+            vaccinatedGpid = getgid();
+
+            if (vaccinatedProcessesExist) {
+                tcsetpgrp(0, vaccinatedGpid);
+                sleep(30);
+                tcsetpgrp(0, vaccinatedGpid);
+            }
         }
         else
         { // Executing the commands
@@ -47,10 +51,23 @@ void pshLoop()
 
             if (numOfCommands == 1)
                 executeCommandForeground(command, destinyPath);
-            else
+            else {
+                vaccinatedProcessesExist = true;
                 proccesses = executeCommandBackground(command, NULL);
+            }
+
+            for (int j = 0; j < ARGV_LEN && command[j] != NULL; j++) {
+                free(command[j]);
+            }
+            free(command);
         }
+      
     }
+
+    /*for(int i = 0; i < MAX_COMMANDS && commands[i] != NULL; i++) {
+      free(commands[i]);
+    }*/
+
     pshLoop();
 }
 
@@ -61,47 +78,57 @@ int executeCommandBackground(char **command, char *destPath)
     f_a = fork();
     if (!f_a)
     {
+        setSignalsVacinated();
+        
         int stdout_bkp, fd;
         stdout_bkp = dup(STDOUT_FILENO);
         fd = open("/dev/null", O_WRONLY);
-
+        
         dup2(fd, STDOUT_FILENO);
-        dup2(fd, STDERR_FILENO);
         close(fd);
 
-        executeCommand(command, NULL);
+        executeCommand(command, NULL, false);
+        wait(NULL);
 
         dup2(stdout_bkp, STDOUT_FILENO);
-        dup2(stdout_bkp, STDERR_FILENO);
-        close(stdout_bkp);
+        close(stdout_bkp); 
 
         exit(0);
     }
+    return -1;
 }
 
-int executeCommandForeground(char **command, char *destPath)
+void executeCommandForeground(char **command, char *destPath)
 {
-    executeCommand(command, destPath);
+    executeCommand(command, destPath, true);
     wait(NULL);
 }
 
-int executeCommand(char **command, char *destPath)
+int executeCommand(char **command, char *destPath, bool foreground)
 {
     pid_t pid;
 
     if ((pid = fork()) == 0) 
-    { // The command will run in foreground at the child process (background of the parent process)W
-        // Changing the default output
-        int ret, process;
-        ret = tcsetpgrp(shell_terminal, getpgid(getpid()));
+    { // The command will run in foreground at the child process (background of the parent process)
+        if (foreground) {
+            pid_t fork_pid;
+            fork_pid = getpid();
+            setpgid(fork_pid, fork_pid);
+        }
+
         if (destPath)
         {
             int fd = open(destPath, O_RDWR, S_IRUSR | S_IWUSR);
             close(STDOUT);
             dup2(fd, STDOUT);
         }
-        process = execvp(command[0], command); // This must make the program run
-        exit(1);
+
+        // This must make the program run
+        if(execvp(command[0], command) == -1) 
+        {
+            perror("execvp"); 
+        }
+        exit(0);
     }
 
     return -1;
@@ -109,40 +136,43 @@ int executeCommand(char **command, char *destPath)
 
 void showPrompt()
 {
-    printf("\033[1;33m");
-    printf("psh> ");
-    printf("\033[0m");
+    fwrite("\033[1;33m", 1, 8, stdout);
+    fwrite("psh> ", 1, 5, stdout);
+    fwrite("\033[0m", 1, 5, stdout);
+    fflush(stdout);
 }
 
 void renderKillImage()
 {
-    printf("                           ,---.\n");
-    printf("                       /    |\n");
-    printf("                      /     |\n");
-    printf("                     /      |\n");
-    printf("                    /       |\n");
-    printf("               ___,'        |\n");
-    printf("             <  -'          :\n");
-    printf("              `-.__..--'``-,_\\_\n");
-    printf("                 |o/ ` :,.)_`>\n");
-    printf("                 :/ `     ||/)\n");
-    printf("                 (_.).__,-` |\\n");
-    printf("                 /( `.``   `| :\n");
-    printf("                 \'`-.)  `  ; ;\n");
-    printf("                 | `       /-<\n");
-    printf("                 |     `  /   `.\n");
-    printf(" ,-_-..____     /|  `    :__..-'\\n");
-    printf("/,'-.__\\  ``-./ :`      ;       \\n");
-    printf("`\\ `\\  `\\  \\ :  (   `  /  ,   `. \\n");
-    printf("  \\` \\   \\   |  | `   :  :     .\\ \\n");
-    printf("   \\ `\\_  ))  :  ;     |  |      ): :\n");
-    printf("  (`-.-'\\ ||  |\\ \\   ` ;  ;       | |\n");
-    printf("   \\-_   `;;._   ( `  /  /_       | |\n");
-    printf("    `-.-.// ,'`-._\\__/_,'         ; |\n");
-    printf("       \\:: :     /     `     ,   /  |\n");
-    printf("        || |    (        ,' /   /   |\n");
-    printf("        ||                ,'   /    |\n");
-    printf("________ Unfortunately all process died!________\n");
-    printf("___ Vaccination should be a social contract!____\n");
-    printf("____Cooperation was the morally right choice!___\n");
+    printf(
+        "                       ,---.\n"
+        "                       /    |\n"
+        "                      /     |\n"
+        "                     /      |\n"
+        "                    /       |\n"
+        "               ___,'        |\n"
+        "             <  -'          :\n"
+        "              `-.__..--'``-,_\\_\n"
+        "                 |o/ ` :,.)_`>\n"
+        "                 :/ `     ||/)\n"
+        "                 (_.).__,-` |\\ \n"
+        "                 /( `.``   `| :\n"
+        "                 \'`-.)  `  ; ;\n"
+        "                 | `       /-<\n"
+        "                 |     `  /   `.\n"
+        " ,-_-..____     /|  `    :__..-'\\ \n"
+        "/,'-.__\\  ``-./ :`      ;       \\ \n"
+        "`\\ `\\  `\\  \\ :  (   `  /  ,   `. \\ \n"
+        "  \\` \\   \\   |  | `   :  :     .\\ \\ \n"
+        "   \\ `\\_  ))  :  ;     |  |      ): :\n"
+        "  (`-.-'\\ ||  |\\ \\   ` ;  ;       | |\n"
+        "   \\-_   `;;._   ( `  /  /_       | |\n"
+        "    `-.-.// ,'`-._\\__/_,'         ; |\n"
+        "       \\:: :     /     `     ,   /  |\n"
+        "        || |    (        ,' /   /   |\n"
+        "        ||                ,'   /    |\n"
+        "________ Unfortunately all process died!________\n"
+        "___ Vaccination should be a social contract!____\n"
+        "____Cooperation was the morally right choice!___\n"
+    );
 }
