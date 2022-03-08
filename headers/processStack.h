@@ -8,7 +8,7 @@ typedef pid_t Process;
 
 struct node {
     struct node *next;
-    Process *content;
+    Process content;
 };
 
 typedef struct stack {
@@ -29,7 +29,7 @@ Stack* stackInit();
 * Pré-condição: Uma pilha existe.
 * Pós-condição: Um elemento é adicionado à pilha.
 */
-void stackPush(Stack* s, Process* p);
+void stackPush(Stack *s, Process p);
 
 /* Remove o elemento do topo da pilha (ultimo elemento a ser adicionado).
 * INPUTs: Ponteiro para a pilha.
@@ -37,7 +37,7 @@ void stackPush(Stack* s, Process* p);
 * Pré-condição: Uma pilha existe.
 * Pós-condição: Um elemento é retirado da pilha, caso exista ao menos um elemento.
 */
-Process *stackPop(Stack* s);
+Process stackPop(Stack *s);
 
 /* A pilha é destruída.
 * INPUTs: Ponteiro para a pilha.

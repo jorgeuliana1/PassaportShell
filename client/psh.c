@@ -14,13 +14,18 @@
 #include "../headers/commandLine.h"
 #include "../headers/signal.h"
 #include "../headers/psh.h"
+#include "../headers/processStack.h"
 
 #define STDOUT 1
 
 bool vaccinatedProcessesExist = false;
+Stack *globalStack = NULL;
 
 void pshLoop()
 {
+    if (!globalStack)
+        globalStack = stackInit();
+
     // printf("prompt pid = %d\n", getpid());
     showPrompt();
     char *commands[MAX_COMMANDS];
@@ -30,6 +35,11 @@ void pshLoop()
     for (int i = 0; i < numOfCommands; i++) {
         if (!strcmp(commands[i], "term"))
         {
+            while (!stackEmpty(globalStack))
+            {
+                pid_t to_kill = stackPop(globalStack);
+                kill(to_kill, SIGQUIT);
+            }
             exit(0);
         }
         else if (!strcmp(commands[i], "fg")){
@@ -37,7 +47,7 @@ void pshLoop()
             vaccinatedGpid = getpgid(getpid());
 
             if (vaccinatedProcessesExist) {
-                tcsetpgrp(STDOUT_FILENO, vaccinatedGpid);
+                tcsetpgrp(0, vaccinatedGpid);
                 sleep(30);
                 tcsetpgrp(0, vaccinatedGpid);
             }
@@ -64,10 +74,6 @@ void pshLoop()
         }
       
     }
-
-    /*for(int i = 0; i < MAX_COMMANDS && commands[i] != NULL; i++) {
-      free(commands[i]);
-    }*/
 
     pshLoop();
 }
@@ -116,10 +122,10 @@ int executeCommand(char **command, char *destPath, bool foreground)
         }
 
         // This must make the program run
-        if(execvp(command[0], command) == -1) 
-        {
-            perror("execvp"); 
-        }
+        if (execvp(command[0], command) == -1)
+            perror("execvp");
+        else if (foreground)
+            stackPush(globalStack, getpid());
         exit(0);
     }
 

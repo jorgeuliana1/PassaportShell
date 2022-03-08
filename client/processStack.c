@@ -11,28 +11,31 @@ Stack* stackInit() {
     return s;
 }
 
-void stackPush(Stack* s, Process *p) {
-    struct node* n;
-    n = (struct node*)malloc(sizeof(struct node));
-    n->content = p;
-    n->next = s->top;
-    s->top = n;
+void stackPush(Stack *s, Process p)
+{
+  struct node *n;
+  n = (struct node *)malloc(sizeof(struct node));
+  n->content = p;
+  n->next = s->top;
+  s->top = n;
 }
 
-Process *stackPop(Stack* s) {
-    if (stackEmpty(s)) {
-        return NULL;
-    }
+Process stackPop(Stack *s)
+{
+  if (stackEmpty(s))
+  {
+    return -1;
+  }
 
-    struct node *n;
-    n = s->top;
-    s->top = n->next;
+  struct node *n;
+  n = s->top;
+  s->top = n->next;
 
-    Process *p;
-    p = n->content;
-    free(n);
-    
-    return p;
+  Process p;
+  p = n->content;
+  free(n);
+
+  return p;
 }
 
 void stackDestroy(Stack* s) {
