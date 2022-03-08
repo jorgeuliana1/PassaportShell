@@ -3,7 +3,7 @@
 - [X] Run processes in background
 - [X] Run processes in foreground
 - [X] Define folder architecture
-- [ ] Separate process by group
+- [X] Separate process by group
 - [ ] Put processes to foreground (fg command)
 - [ ] Put processes to bakcground (30s after fg command)
 - [X] Redirect stdout with command operator >
