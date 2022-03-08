@@ -28,15 +28,16 @@ void pshLoop()
     int defOut;
 
     for (int i = 0; i < numOfCommands; i++) {
-        if (!strcmp(commands[i], "term")){
+        if (!strcmp(commands[i], "term"))
+        {
             exit(0);
         }
         else if (!strcmp(commands[i], "fg")){
             pid_t vaccinatedGpid;
-            vaccinatedGpid = getgid();
+            vaccinatedGpid = getpgid(getpid());
 
             if (vaccinatedProcessesExist) {
-                tcsetpgrp(0, vaccinatedGpid);
+                tcsetpgrp(STDOUT_FILENO, vaccinatedGpid);
                 sleep(30);
                 tcsetpgrp(0, vaccinatedGpid);
             }
