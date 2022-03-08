@@ -74,27 +74,18 @@ void pshLoop()
 int executeCommandBackground(char **command, char *destPath)
 {
     pid_t f_a;
+    setSignalsVacinated();
 
-    f_a = fork();
-    if (!f_a)
-    {
-        setSignalsVacinated();
-        
-        int stdout_bkp, fd;
-        stdout_bkp = dup(STDOUT_FILENO);
-        fd = open("/dev/null", O_WRONLY);
-        
-        dup2(fd, STDOUT_FILENO);
-        close(fd);
+    int stdout_bkp, fd;
+    stdout_bkp = dup(STDOUT_FILENO);
+    fd = open("/dev/null", O_WRONLY);
 
-        executeCommand(command, NULL, false);
-        wait(NULL);
+    dup2(fd, STDOUT_FILENO);
+    close(fd);
+    executeCommand(command, NULL, false);
+    dup2(stdout_bkp, STDOUT_FILENO);
+    close(stdout_bkp);
 
-        dup2(stdout_bkp, STDOUT_FILENO);
-        close(stdout_bkp); 
-
-        exit(0);
-    }
     return -1;
 }
 
